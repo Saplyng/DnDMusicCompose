@@ -1,17 +1,26 @@
 package com.example.dndmusiccompose
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.graphics.drawable.BitmapDrawable
+import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.Composable
+import androidx.compose.ViewAdapters
 import androidx.compose.state
 import androidx.compose.unaryPlus
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.ui.core.*
 import androidx.ui.foundation.DrawImage
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
+import androidx.ui.graphics.Image
 import androidx.ui.layout.*
 import androidx.ui.material.*
 import androidx.ui.res.imageResource
+import androidx.ui.res.vectorResource
 import androidx.ui.tooling.preview.Preview
 import com.example.dndmusiccompose.sampledata.scenes
 import com.example.dndmusiccompose.sampledata.songs
@@ -43,16 +52,6 @@ fun TabScreen() {
 
     FlexColumn{
         inflexible{
-//            TopAppBar(
-//                    title = { Text(text = "Interests")},
-//                    navigationIcon = {
-//                        VectorImageButton(R.drawable.ic_launcher_foreground){
-//                            openDrawer()
-//                        }
-//                    }
-//            )
-        }
-        inflexible{
             TabRow(items = sectionTitles, selectedIndex = section.ordinal) { index, text ->
                 Tab(text = text, selected = section.ordinal == index){
                     section = Sections.values()[index]
@@ -74,15 +73,21 @@ fun TabScreen() {
 
 @Composable
 private fun HomeTab(){
+    Column(
+        ExpandedHeight,
+        mainAxisAlignment = MainAxisAlignment.End,
+        crossAxisAlignment = CrossAxisAlignment.Stretch
+    ){
+            FloatingActionButton(icon = +imageResource(R.drawable.ic_add_black_48dp),onClick = { print("hello world") },elevation = 12.dp)
+    }
+
 
 }
 
 @Composable
 private fun SongsTab(){
-    TabWithTopics(
-        Sections.Songs.title,
-        songs
-    )
+    TabWithTopics(Sections.Songs.title, songs)
+
 }
 
 @Composable
@@ -99,6 +104,7 @@ private fun GenresTab(){
 private fun ScenariosTab(){
 TabWithTopics(Sections.Scenarios.title,
     scenes)
+
 }
 
 
@@ -160,6 +166,7 @@ private fun TabWithSections(
 @Composable
 private fun TopicItem(topicKey: String, itemTitle: String){
     val image = +imageResource(R.drawable.placeholder_1_1)
+//    val image = MediaMetadataRetriever().primaryImage
     Padding(left = 16.dp, right = 16.dp) {
         FlexRow(
             crossAxisAlignment = CrossAxisAlignment.Center
@@ -211,3 +218,4 @@ private fun selectedTopic(key: String, select: Boolean){
         AppStatus.selectedTopics.remove(key)
     }
 }
+
