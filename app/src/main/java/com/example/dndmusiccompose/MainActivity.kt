@@ -1,29 +1,28 @@
 package com.example.dndmusiccompose
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.media.MediaMetadataRetriever
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.Composable
-import androidx.compose.ViewAdapters
-import androidx.compose.state
-import androidx.compose.unaryPlus
+import androidx.compose.*
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.ui.core.*
+import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.DrawImage
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.graphics.Image
 import androidx.ui.layout.*
 import androidx.ui.material.*
+import androidx.ui.material.ripple.Ripple
 import androidx.ui.res.imageResource
 import androidx.ui.res.vectorResource
 import androidx.ui.tooling.preview.Preview
-import com.example.dndmusiccompose.sampledata.scenes
-import com.example.dndmusiccompose.sampledata.songs
+import com.example.dndmusiccompose.sampledata.*
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +34,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+
+
 
 private enum class Sections(val title: String){
     Home("Home"),
@@ -73,12 +74,13 @@ fun TabScreen() {
 
 @Composable
 private fun HomeTab(){
+    val context = +ambient(ContextAmbient)
     Column(
         ExpandedHeight,
         mainAxisAlignment = MainAxisAlignment.End,
         crossAxisAlignment = CrossAxisAlignment.Stretch
     ){
-            FloatingActionButton(icon = +imageResource(R.drawable.ic_add_black_48dp),onClick = { print("hello world") },elevation = 12.dp)
+            FloatingActionButton(icon = +imageResource(R.drawable.ic_add_black_48dp),onClick = { getSongs(context = context) },elevation = 12.dp)
     }
 
 
@@ -92,7 +94,7 @@ private fun SongsTab(){
 
 @Composable
 private fun MixerTab(){
-
+    MixerList(Sections.Songs.title, testWhatever)
 }
 
 @Composable
@@ -113,6 +115,63 @@ TabWithTopics(Sections.Scenarios.title,
 fun DefaultPreview() {
     MaterialTheme {
         TabScreen()
+    }
+}
+@Composable
+private fun MixerList(songname: String, playlist: List<String>){
+    VerticalScroller{
+        Column{
+            HeightSpacer(height = 16.dp)
+            playlist.forEach{song ->
+                MixerItem(
+                    getTopicKey(songname,
+                        "- ",
+                        song
+                    ), song)
+            }
+        }
+    }
+}
+
+@Composable
+private fun MixerItem(topicKey: String, itemTitle: String){
+    val image = +imageResource(android.R.drawable.ic_media_play)
+    val context = +ambient(ContextAmbient)
+//    val image = MediaMetadataRetriever().primaryImage
+    Padding(left = 16.dp, right = 16.dp) {
+        FlexRow(
+            crossAxisAlignment = CrossAxisAlignment.Center
+        ){
+            inflexible{
+                Ripple(bounded = false){
+                    Clickable(onClick = {
+                        MediaPlayer.create(context, R.raw.cotton_club)?.start()
+                    }) {
+                        Container(width = 56.dp, height = 56.dp) {
+                            Clip(
+                                RoundedCornerShape(4.dp)
+                            ) {
+
+                                DrawImage(image)
+
+
+                            }
+                        }
+                    }
+                }
+
+            }
+            expanded(1f){
+                Text(
+                    text = itemTitle,
+                    modifier = Spacing(16.dp),
+                    style = +themeTextStyle { subtitle1 }
+                )
+            }
+            inflexible{
+
+            }
+        }
     }
 }
 
@@ -192,7 +251,8 @@ private fun TopicItem(topicKey: String, itemTitle: String){
                     onSelected = {
                         selectedTopic(topicKey, !selected)
                     },
-                    selected = selected
+                    selected = selected,
+                    itemTitle = itemTitle
                 )
             }
         }

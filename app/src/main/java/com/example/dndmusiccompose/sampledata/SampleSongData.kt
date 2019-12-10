@@ -1,8 +1,11 @@
 package com.example.dndmusiccompose.sampledata
 
-import android.R.raw
+import android.content.Context
+import android.media.MediaMetadataRetriever
+import android.net.Uri
+import androidx.ui.input.KeyboardType
 import com.example.dndmusiccompose.R
-import java.lang.reflect.Field
+//import sun.invoke.util.VerifyAccess.getPackageName
 
 
 val songs = listOf(
@@ -35,3 +38,14 @@ val scenes = listOf(
     "Meow"
 ).sorted()
 
+val testWhatever = mutableListOf<String>(
+    "Cotton Club"
+)
+val test_songs: MutableList<String> = mutableListOf<String>()
+
+//fun getSongTitleForFile(filePath: String?, context: Context) {
+//    val mediaPath: Uri = KeyboardType.Uri.parse("android.resource://" + context!!.packageName + "/" + R.raw.cotton_club)
+//    val mmr = MediaMetadataRetriever()
+//    mmr.setDataSource(context, mediaPath)
+//}
+//var song_titles: List<String> = getSongTitleForFile(R.raw.cotton_club.toString())

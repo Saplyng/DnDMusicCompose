@@ -1,5 +1,9 @@
 package com.example.dndmusiccompose
 
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.widget.Button
 import androidx.compose.Composable
 import androidx.compose.unaryPlus
 import androidx.ui.core.dp
@@ -18,19 +22,24 @@ import androidx.ui.material.surface.Surface
 import androidx.ui.material.themeColor
 import androidx.ui.res.vectorResource
 import androidx.ui.tooling.preview.Preview
+import com.example.dndmusiccompose.sampledata.testWhatever
+
 
 @Composable
 fun SelectTopicButton(
     onSelected: ((Boolean) -> Unit)? = null,
-    selected: Boolean = false
+    selected: Boolean = false,
+    itemTitle: String
 ){
     Ripple(bounded = false) {
         Toggleable(checked = selected, onCheckedChange = onSelected) {
             Container(width = 36.dp, height = 36.dp){
                 if (selected){
                     DrawSelectTopicButtonOn()
+                    AddToMixer(itemTitle = itemTitle)
                 } else {
                     DrawSelectTopicButtonOff()
+                    RemoveFromMixer(itemTitle = itemTitle)
                 }
             }
         }
@@ -39,7 +48,28 @@ fun SelectTopicButton(
 }
 
 @Composable
+fun AddToMixer(itemTitle: String){
+    if(itemTitle !in testWhatever){
+        testWhatever.add(itemTitle)
+    }else if (itemTitle in testWhatever){
+        null
+    }
+
+}
+
+@Composable
+fun RemoveFromMixer(itemTitle: String){
+    if(itemTitle in testWhatever){
+        testWhatever.remove(itemTitle)
+    } else if (itemTitle !in testWhatever){
+        null
+    }
+
+}
+
+@Composable
 private fun DrawSelectTopicButtonOn(){
+
     DrawShape(
         shape = CircleShape,
         color = +themeColor { primary}
@@ -54,49 +84,12 @@ private fun DrawSelectTopicButtonOff(){
     DrawVector(+vectorResource(R.drawable.ic_add))
 }
 
-@Preview("off")
-@Composable
-fun SelectedTopicButtonPreviewOff(){
-    SelectTopicButtonPreviewTemplate(
-        lightThemeColors,
-        false
-    )
-}
 
-@Preview("on")
-@Composable
-fun SelectedTopicButtonPreviewOn(){
-    SelectTopicButtonPreviewTemplate(
-        lightThemeColors,
-        true
-    )
-}
-
-@Preview("Off - Dark")
-@Composable
-fun SelectTopicButtonPreviewOffDark() {
-    SelectTopicButtonPreviewTemplate(
-        darkThemeColors,
-        false
-    )
-}
-
-@Preview("On - Dark")
-@Composable
-fun SelectTopicButtonPreviewOnDark() {
-    SelectTopicButtonPreviewTemplate(
-        darkThemeColors,
-        true
-    )
-}
-
-@Composable
-private fun SelectTopicButtonPreviewTemplate(themeColors: MaterialColors, selected: Boolean){
-    MaterialTheme(themeColors){
-        Surface{
-            Padding(32.dp){
-                SelectTopicButton(selected = selected)
-            }
-        }
+fun getSongs(context: Context) {
+    val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+        type = "audio/mpeg"
     }
+    val extras: Bundle? = intent.getExtras()
+
+    context.startActivity(Intent.createChooser(intent, "Share post"))
 }
